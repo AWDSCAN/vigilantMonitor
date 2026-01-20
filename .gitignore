@@ -26,8 +26,7 @@ bundle-analysis.html
 
 # Vite specific
 .vite/
-vite.config.js.timestamp-*
-vite.config.ts.timestamp-*
+
 
 # IDEs and editors
 .idea/
@@ -104,16 +103,13 @@ go.work.sum
 # env file
 .env
 
-# build
-komari
+
 
 
 __debug*
 agent.json
 .vscode/
-komari-agent.exe
-komari-agent
-.komari-agent.exe.old
+
 build/
 auto-discovery.json
 net_static.json
