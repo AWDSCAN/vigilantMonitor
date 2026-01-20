@@ -51,7 +51,7 @@ const Footer = () => {
         }}
       >
         {/* Copyright and ICP Filing */}
-        <Flex direction="column" gap="2" align={{ initial: 'center', md: 'start' }}>
+        {/* <Flex direction="column" gap="2" align={{ initial: 'center', md: 'start' }}>
           <Text size="2" color="gray">
              Powered by SECUCY 
           </Text>
@@ -63,7 +63,7 @@ const Footer = () => {
           <Text size="1" color="gray">
             {versionInfo && `${versionInfo.version} (${versionInfo.hash})`}
           </Text>
-        </Flex>
+        </Flex> */}
 
       </Flex>
     </div>
