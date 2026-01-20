@@ -2,54 +2,16 @@ package patch
 
 import (
 	"log"
-	"os"
 
 	"github.com/gookit/event"
-	"github.com/komari-monitor/komari/internal/conf"
-	"github.com/komari-monitor/komari/internal/database/models"
 	"github.com/komari-monitor/komari/internal/eventType"
-	"gorm.io/driver/sqlite"
-	"gorm.io/gorm"
 )
 
 func init() {
 	event.On(eventType.ProcessStart, event.ListenerFunc(func(e event.Event) error {
-		if _, err := os.Stat("./data/komari.db"); os.IsNotExist(err) {
-			return nil
-		}
-		db, _ := gorm.Open(sqlite.Open("./data/komari.db"), &gorm.Config{})
-		sqlDB, _ := db.DB()
-		defer sqlDB.Close()
-		// 0.0.5 迁移ClientInfo
-		if db.Migrator().HasTable("client_infos") {
-			v0_0_5(db)
-		}
-		// 0.0.5a 修正cors拼写错误
-		if db.Migrator().HasColumn(&conf.V1Struct{}, "allow_cros") {
-			v0_0_5a(db)
-		}
-		// 0.1.4 重建LoadNotification表
-		if db.Migrator().HasColumn(&models.LoadNotification{}, "client") {
-			log.Println("[>0.1.4] Rebuilding LoadNotification table....")
-			db.Migrator().DropTable(&models.LoadNotification{})
-		}
-		// 1.0.2 合并OIDC提供商表
-		if !db.Migrator().HasTable(&models.OidcProvider{}) && db.Migrator().HasTable(&conf.V1Struct{}) {
-			v1_0_2_Oidc(db)
-		}
-		// 1.0.2 迁移消息发送配置到单独的表
-		if !db.Migrator().HasTable(&models.MessageSenderProvider{}) && db.Migrator().HasTable(&conf.V1Struct{}) {
-			v1_0_2_MessageSender(db)
-		}
-		// 1.1.4 清理配置表
-		if db.Migrator().HasTable(&conf.V1Struct{}) {
-			v1_1_4(db)
-		}
-		v1_1_4_PreMigration()
-
-		// 迁移所有时间字段到 UTC
-		v1_1_4_MigrateToUTC()
-
+		// 旧版本 SQLite 数据库迁移已废弃
+		// 如需从旧版本 SQLite 迁移，请使用 scripts/migrate_sqlite_to_mysql.sh 脚本
+		log.Println("Patch system: SQLite migrations are deprecated, using MySQL only")
 		return nil
-	}), event.Max+8)
+	}), event.Max)
 }

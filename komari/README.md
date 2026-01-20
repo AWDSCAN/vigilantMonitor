@@ -16,6 +16,7 @@ Komari is a lightweight, self-hosted server monitoring tool designed to provide 
 - **Lightweight and Efficient**: Low resource consumption, suitable for servers of all sizes.
 - **Self-hosted**: Complete control over data privacy, easy to deploy.
 - **Web Interface**: Intuitive monitoring dashboard, easy to use.
+- **Database Support**: SQLite (default) and MySQL support with 1:1 schema mapping.
 
 ## Quick Start
 
@@ -37,6 +38,8 @@ sudo ./install-komari.sh
 
 ### 2. Docker Deployment
 
+#### SQLite Mode (Default)
+
 1. Create a data directory:
    ```bash
    mkdir -p ./data
@@ -49,6 +52,34 @@ sudo ./install-komari.sh
      --name komari \
      ghcr.io/komari-monitor/komari:latest
    ```
+
+#### MySQL Mode (Recommended for Production)
+
+1. Using Docker Compose:
+   ```bash
+   # Download docker-compose.yml
+   curl -O https://raw.githubusercontent.com/komari-monitor/komari/main/docker-compose.yml
+   
+   # Start with MySQL
+   docker-compose --profile mysql up -d
+   ```
+
+2. Or manual setup:
+   ```bash
+   docker run -d \
+     -p 25774:25774 \
+     -e KOMARI_DB_TYPE=mysql \
+     -e KOMARI_DB_HOST=your_mysql_host \
+     -e KOMARI_DB_PORT=3306 \
+     -e KOMARI_DB_USER=komari \
+     -e KOMARI_DB_PASS=your_password \
+     -e KOMARI_DB_NAME=komari \
+     --name komari \
+     ghcr.io/komari-monitor/komari:latest
+   ```
+
+See [Docker Guide](./scripts/DOCKER_GUIDE.md) for more details.
+
 3. View the default username and password:
    ```bash
    docker logs komari
@@ -98,6 +129,29 @@ sudo ./install-komari.sh
    ./komari server -l 0.0.0.0:25774
    ```
    The default listening port is `25774`. Access `http://localhost:25774`.
+
+## Database Migration
+
+### SQLite to MySQL Migration
+
+Komari supports migrating from SQLite to MySQL with 1:1 schema mapping. See the [Migration Guide](./scripts/MIGRATION_GUIDE.md) for detailed instructions.
+
+Quick migration:
+```bash
+# Linux/Mac
+cd scripts
+chmod +x migrate_sqlite_to_mysql.sh
+./migrate_sqlite_to_mysql.sh
+
+# Windows
+cd scripts
+.\migrate_sqlite_to_mysql.ps1
+```
+
+For more information:
+- 📖 [Migration Guide](./scripts/MIGRATION_GUIDE.md)
+- 🐳 [Docker Guide](./scripts/DOCKER_GUIDE.md)
+- ⚡ [Quick Reference](./scripts/QUICK_REFERENCE.md)
 
 ## Frontend Development Guide
 

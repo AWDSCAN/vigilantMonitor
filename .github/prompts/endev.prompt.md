@@ -21,3 +21,13 @@ komari --- web管理后台后端代码目录
 komari-agent --- 轻量级数据采集Agent代码目录
 komari-web --- web管理后台前端代码目录
 docs --- 项目文档目录
+
+# 数据库规范
+mysql的配置如下：
+本地可执行文件路径为：D:\Language\php\phpstudy_pro\Extensions\MySQL8.0.12\bin
+主机: localhost
+端口: 3306
+用户名：root
+密码：root
+数据库名：komari_db
+MCP工具名称：komari_db

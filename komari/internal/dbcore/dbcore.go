@@ -52,9 +52,7 @@ func updateSchemaVersion(db *gorm.DB) {
 
 // setMySQLTableCharset 设置 MySQL 表的字符集为 utf8mb4
 func setMySQLTableCharset(db *gorm.DB, tableName string) {
-	if conf.Conf.Database.DatabaseType == "mysql" {
-		db.Exec(fmt.Sprintf("ALTER TABLE `%s` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", tableName))
-	}
+	db.Exec(fmt.Sprintf("ALTER TABLE `%s` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci", tableName))
 }
 
 // runMigrations 执行所有数据库迁移
@@ -86,16 +84,14 @@ func runMigrations(db *gorm.DB) error {
 	}
 
 	// 为 MySQL 设置表字符集
-	if conf.Conf.Database.DatabaseType == "mysql" {
-		tableNames := []string{
-			"users", "clients", "records", "gpu_records", "logs", "clipboards",
-			"load_notifications", "offline_notifications", "ping_records", "ping_tasks",
-			"oidc_providers", "message_sender_providers", "theme_configurations",
-			"sessions", "tasks", "task_results", "schema_versions",
-		}
-		for _, tableName := range tableNames {
-			setMySQLTableCharset(db, tableName)
-		}
+	tableNames := []string{
+		"users", "clients", "records", "gpu_records", "logs", "clipboards",
+		"load_notifications", "offline_notifications", "ping_records", "ping_tasks",
+		"oidc_providers", "message_sender_providers", "theme_configurations",
+		"sessions", "tasks", "task_results", "schema_versions",
+	}
+	for _, tableName := range tableNames {
+		setMySQLTableCharset(db, tableName)
 	}
 
 	// 创建长期记录表

@@ -1,0 +1,98 @@
+# Komari Monitor - Docker Compose Configuration
+# 
+# 本文件提供两种配置：
+# 1. SQLite 模式（默认，单容器）
+# 2. MySQL 模式（推荐生产环境，多容器）
+
+version: '3.8'
+
+services:
+  # ================================
+  # Komari Monitor - SQLite 模式
+  # ================================
+  komari-sqlite:
+    image: komari-monitor:latest
+    container_name: komari-sqlite
+    restart: unless-stopped
+    ports:
+      - "25774:25774"
+    environment:
+      - GIN_MODE=release
+      - KOMARI_DB_TYPE=sqlite
+      - KOMARI_DB_FILE=/app/data/komari.db
+      - KOMARI_LISTEN=0.0.0.0:25774
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./data:/app/data
+      - ./themes:/app/themes
+      - ./logs:/app/logs
+    profiles:
+      - sqlite
+
+  # ================================
+  # Komari Monitor - MySQL 模式
+  # ================================
+  komari-mysql:
+    image: komari-monitor:latest
+    container_name: komari-mysql
+    restart: unless-stopped
+    ports:
+      - "25774:25774"
+    environment:
+      - GIN_MODE=release
+      - KOMARI_DB_TYPE=mysql
+      - KOMARI_DB_HOST=mysql
+      - KOMARI_DB_PORT=3306
+      - KOMARI_DB_USER=komari
+      - KOMARI_DB_PASS=komari_secure_password
+      - KOMARI_DB_NAME=komari
+      - KOMARI_LISTEN=0.0.0.0:25774
+      - TZ=Asia/Shanghai
+    volumes:
+      - ./themes:/app/themes
+      - ./logs:/app/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+    profiles:
+      - mysql
+
+  # ================================
+  # MySQL Database
+  # ================================
+  mysql:
+    image: mysql:8.0
+    container_name: komari-mysql-db
+    restart: unless-stopped
+    environment:
+      - MYSQL_ROOT_PASSWORD=root_password_change_me
+      - MYSQL_DATABASE=komari
+      - MYSQL_USER=komari
+      - MYSQL_PASSWORD=komari_secure_password
+      - TZ=Asia/Shanghai
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - ./scripts/mysql_schema.sql:/docker-entrypoint-initdb.d/init.sql
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --default-time-zone=+08:00
+      - --max_connections=1000
+      - --innodb_buffer_pool_size=256M
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-p$$MYSQL_ROOT_PASSWORD"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    profiles:
+      - mysql
+
+volumes:
+  mysql_data:
+    driver: local
+
+networks:
+  default:
+    name: komari-network
