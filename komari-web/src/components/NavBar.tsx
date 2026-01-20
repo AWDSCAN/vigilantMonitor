@@ -26,7 +26,7 @@ const NavBar = () => {
             className="text-base font-bold"
             style={{ color: "var(--accent-4)" }}
           >
-            Komari Monitor
+            CYSECU Monitor
           </label>
         </div>
       </div>

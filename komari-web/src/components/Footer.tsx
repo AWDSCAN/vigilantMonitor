@@ -53,7 +53,7 @@ const Footer = () => {
         {/* Copyright and ICP Filing */}
         <Flex direction="column" gap="2" align={{ initial: 'center', md: 'start' }}>
           <Text size="2" color="gray">
-             Powered by Komari Monitor.
+             Powered by SECUCY 
           </Text>
           {buildTime && (
             <Text size="1" color="gray">
