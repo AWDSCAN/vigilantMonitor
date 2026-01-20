@@ -17,3 +17,7 @@ agent: agent
 Komari 是一款轻量级的自托管服务器监控工具，旨在提供简单、高效的服务器性能监控解决方案。它支持通过 Web 界面查看服务器状态，并通过轻量级 Agent 收集数据。
 
 # 项目目录结构
+komari --- web管理后台后端代码目录
+komari-agent --- 轻量级数据采集Agent代码目录
+komari-web --- web管理后台前端代码目录
+docs --- 项目文档目录
