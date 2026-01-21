@@ -7,9 +7,10 @@ import (
 
 	"log/slog"
 
-	"github.com/gookit/event"
 	"vigilantMonitorServer/cmd/flags"
 	"vigilantMonitorServer/internal/eventType"
+
+	"github.com/gookit/event"
 )
 
 // 返回默认配置对象
@@ -42,6 +43,14 @@ func Default() Config {
 			RecordEnabled:          true,
 			RecordPreserveTime:     720,
 			PingRecordPreserveTime: 24,
+		},
+		SSL: SSL{
+			Enabled:         true,
+			CertFile:        "./data/ssl/cert.pem",
+			KeyFile:         "./data/ssl/key.pem",
+			AutoGenerate:    true,
+			ForceHTTPS:      true,
+			RedirectToHTTPS: true,
 		},
 		Database: Database{
 			DatabaseType: "sqlite",

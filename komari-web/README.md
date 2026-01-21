@@ -26,15 +26,37 @@ npm install
 
 ### 修改API地址
 
-1. 复制 `.env.example` 文件并重命名为 `.env.development`。
+1. 复制 `.env.development.example` 文件并重命名为 `.env.development`。
 
 2. 修改 `.env.development` 文件中的 `VITE_API_TARGET` 为你的开发环境地址。
+
+**HTTPS 配置**（推荐）：
+```bash
+# .env.development
+VITE_API_TARGET=https://127.0.0.1:25774
+```
+
+**HTTP 配置**（不推荐）：
+```bash
+# .env.development
+VITE_API_TARGET=http://127.0.0.1:25774
+```
+
+> 💡 **提示**: 开发服务器会自动检测并使用后端生成的 SSL 证书启用 HTTPS。
+> 
+> 如果后端已启用 HTTPS，前端也会自动使用 HTTPS。详见 [HTTPS_FRONTEND_GUIDE.md](./HTTPS_FRONTEND_GUIDE.md)
 
 ### 启动开发服务器
 
 ```bash
 npm run dev
 ```
+
+启动成功后访问：
+- HTTPS 模式: `https://localhost:5173`
+- HTTP 模式: `http://localhost:5173`
+
+⚠️ **注意**: 使用自签名证书时，浏览器会显示安全警告，点击"高级"→"继续访问"即可。
 
 ### 构建
 

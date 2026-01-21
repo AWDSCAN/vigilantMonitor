@@ -111,22 +111,47 @@ export default defineConfig(({ mode }) => {
       }
     }
     if (!process.env.VITE_API_TARGET) {
-      process.env.VITE_API_TARGET = "http://127.0.0.1:25774";
+      process.env.VITE_API_TARGET = "https://127.0.0.1:25774";
     }
+
+    // SSL证书路径（使用后端生成的证书）
+    const sslCertPath = path.resolve(__dirname, "../vigilantMonitorServer/data/ssl/cert.pem");
+    const sslKeyPath = path.resolve(__dirname, "../vigilantMonitorServer/data/ssl/key.pem");
+
+    // 检查SSL证书是否存在
+    const sslEnabled = fs.existsSync(sslCertPath) && fs.existsSync(sslKeyPath);
+
     baseConfig.server = {
+      https: sslEnabled ? {
+        cert: fs.readFileSync(sslCertPath),
+        key: fs.readFileSync(sslKeyPath),
+      } : undefined,
       proxy: {
         "/api": {
           target: process.env.VITE_API_TARGET,
           changeOrigin: true,
           rewriteWsOrigin: true,
           ws: true,
+          secure: false, // 允许自签名证书
         },
         "/themes": {
           target: process.env.VITE_API_TARGET,
           changeOrigin: true,
+          secure: false, // 允许自签名证书
         },
       },
     };
+
+    if (sslEnabled) {
+      console.log("✓ HTTPS enabled for Vite dev server");
+      console.log(`  Certificate: ${sslCertPath}`);
+      console.log(`  Private Key: ${sslKeyPath}`);
+    } else {
+      console.warn("⚠️  SSL certificates not found, running HTTP mode");
+      console.warn(`  Expected cert: ${sslCertPath}`);
+      console.warn(`  Expected key: ${sslKeyPath}`);
+      console.warn("  Run: cd ../vigilantMonitorServer && ./vigilantMonitorServer ssl generate");
+    }
   }
 
   return baseConfig;

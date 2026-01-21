@@ -18,6 +18,7 @@ type Config struct {
 	Notification Notification           `json:"notification"`
 	Record       Record                 `json:"record"`
 	Listen       string                 `json:"listen"`
+	SSL          SSL                    `json:"ssl"` // SSL/TLS配置
 	Database     Database               `json:"database"`
 	Extensions   map[string]interface{} `json:"extensions,omitempty"` // 扩展配置，由各模块注册
 }
@@ -75,6 +76,15 @@ type Record struct {
 	RecordEnabled          bool `json:"record_enabled"`            // 是否启用记录功能
 	RecordPreserveTime     int  `json:"record_preserve_time"`      // 记录保留时间，单位小时，默认30天
 	PingRecordPreserveTime int  `json:"ping_record_preserve_time"` // Ping 记录保留时间，单位小时，默认1天
+}
+
+type SSL struct {
+	Enabled         bool   `json:"enabled"`           // 是否启用HTTPS
+	CertFile        string `json:"cert_file"`         // 证书文件路径
+	KeyFile         string `json:"key_file"`          // 私钥文件路径
+	AutoGenerate    bool   `json:"auto_generate"`     // 自动生成自签名证书
+	ForceHTTPS      bool   `json:"force_https"`       // 强制使用HTTPS（禁用HTTP）
+	RedirectToHTTPS bool   `json:"redirect_to_https"` // HTTP请求重定向到HTTPS
 }
 
 // [DEPRECATED] 旧的数据结构，将不再维护，请考虑使用 conf.Config 结构体
