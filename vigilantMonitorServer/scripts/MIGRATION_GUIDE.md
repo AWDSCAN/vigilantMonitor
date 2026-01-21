@@ -1,6 +1,6 @@
-# Komari Monitor - SQLite 到 MySQL 迁移指南
+# vigilant Monitor - SQLite 到 MySQL 迁移指南
 
-本文档说明如何将 Komari Monitor 的数据库从 SQLite 迁移到 MySQL，确保表结构字段结构一比一对应。
+本文档说明如何将 vigilant Monitor 的数据库从 SQLite 迁移到 MySQL，确保表结构字段结构一比一对应。
 
 ## 📋 目录
 
@@ -139,7 +139,7 @@ database:
 ### 步骤 5: 验证迁移
 
 ```bash
-# 启动 Komari Monitor
+# 启动 vigilant Monitor
 go run ./main.go
 
 # 或使用 Docker
@@ -208,7 +208,7 @@ MySQL 版本完整保留了所有：
 如果迁移后发现问题，可以快速回滚到 SQLite：
 
 ```bash
-# 1. 停止 Komari Monitor
+# 1. 停止 vigilant Monitor
 pkill komari
 
 # 2. 恢复 SQLite 数据库
@@ -354,7 +354,7 @@ expire_logs_days=7
 
 如果遇到问题：
 
-1. 查看 Komari Monitor 日志
+1. 查看 vigilant Monitor 日志
 2. 检查 MySQL 错误日志：`/var/log/mysql/error.log`
 3. 提交 Issue 到项目仓库
 

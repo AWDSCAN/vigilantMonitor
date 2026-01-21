@@ -1,6 +1,6 @@
-# Komari Monitor - MySQL 数据库支持
+# vigilant Monitor - MySQL 数据库支持
 
-本目录包含将 Komari Monitor 从 SQLite 迁移到 MySQL 的所有工具和文档。
+本目录包含将 vigilant Monitor 从 SQLite 迁移到 MySQL 的所有工具和文档。
 
 ## 📁 文件清单
 
@@ -284,9 +284,9 @@ SET FOREIGN_KEY_CHECKS=1;
 
 ## 📄 许可证
 
-本项目遵循 Komari Monitor 的开源许可证。
+本项目遵循 vigilant Monitor 的开源许可证。
 
 ---
 
 **最后更新：** 2026-01-20  
-**维护者：** Komari Monitor Team
+**维护者：** vigilant Monitor Team

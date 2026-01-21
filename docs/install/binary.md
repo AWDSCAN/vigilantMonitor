@@ -130,7 +130,7 @@ Komari 第一次运行时会生成默认的用户名和密码，供你登录。
 3. 复制下面内容，粘贴到文件里：
    ```ini
    [Unit]
-   Description=Komari Monitoring Service
+   Description=vigilant Monitoring Service
    After=network.target
 
    [Service]

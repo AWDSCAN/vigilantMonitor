@@ -147,7 +147,7 @@ theme.zip
 为了确保自定义设置功能正常工作，`index.html` 中必须包含以下固定内容：
 
 ```html
-<title>Komari Monitor</title>
+<title>vigilant Monitor</title>
 <meta name="description" content="A simple server monitor tool.">
 ```
 ```html
@@ -162,7 +162,7 @@ Komari 服务端会自动替换以下内容为用户配置的自定义内容：
 
 | 原始内容 | 替换为 |
 |----------|--------|
-| `<title>Komari Monitor</title>` | 用户设置的自定义标题 |
+| `<title>vigilant Monitor</title>` | 用户设置的自定义标题 |
 | `A simple server monitor tool.` | 用户设置的自定义描述 |
 | `</head>` | 用户自定义头部内容 + `</head>` |
 | `</body>` | 用户自定义底部内容 + `</body>` |
@@ -207,7 +207,7 @@ Komari 系统包含以下特殊页面，这些页面不受主题影响：
 1. **路由冲突**: 主题中不应该使用 `/admin` 和 `/terminal` 路径
 2. **功能分离**: 管理功能应该通过管理员后台实现，不建议在主题中重复实现
 3. **权限控制**: 主题页面应该只展示监控信息，不应包含管理功能
-4. 请务必保留页脚 `Powered by Komari Monitor.`。
+4. 请务必保留页脚 `Powered by vigilant Monitor.`。
 
 ### 本地存储字段
 

@@ -1,4 +1,4 @@
-# Komari Monitor - Docker Compose Configuration
+# vigilant Monitor - Docker Compose Configuration
 # 
 # 本文件提供两种配置：
 # 1. SQLite 模式（默认，单容器）
@@ -8,7 +8,7 @@ version: '3.8'
 
 services:
   # ================================
-  # Komari Monitor - SQLite 模式
+  # vigilant Monitor - SQLite 模式
   # ================================
   komari-sqlite:
     image: komari-monitor:latest
@@ -30,7 +30,7 @@ services:
       - sqlite
 
   # ================================
-  # Komari Monitor - MySQL 模式
+  # vigilant Monitor - MySQL 模式
   # ================================
   komari-mysql:
     image: komari-monitor:latest

@@ -1,6 +1,6 @@
 {
-  "name": "Komari Monitor",
-  "short_name": "Komari Monitor",
+  "name": "vigilant Monitor",
+  "short_name": "vigilant Monitor",
   "description": "A simple server monitor tool",
   "start_url": "/",
   "display": "standalone",

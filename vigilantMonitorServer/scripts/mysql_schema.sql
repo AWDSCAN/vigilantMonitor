@@ -1,4 +1,4 @@
--- Komari Monitor MySQL Database Schema
+-- vigilant Monitor MySQL Database Schema
 -- This schema is generated based on SQLite models and ensures 1:1 field mapping
 -- Character Set: utf8mb4, Collation: utf8mb4_unicode_ci
 

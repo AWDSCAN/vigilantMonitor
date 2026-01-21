@@ -36,7 +36,7 @@ LISTEN_PORT=""
 show_banner() {
     clear
     echo "=============================================================="
-    echo "            Komari Monitoring System Installer"
+    echo "            vigilant Monitoring System Installer"
     echo "       https://github.com/komari-monitor/komari"
     echo "=============================================================="
     echo
@@ -202,7 +202,7 @@ create_systemd_service() {
     local service_file="/etc/systemd/system/${SERVICE_NAME}.service"
     cat > "$service_file" << EOF
 [Unit]
-Description=Komari Monitor Service
+Description=vigilant Monitor Service
 After=network.target
 
 [Service]

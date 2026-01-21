@@ -3,15 +3,16 @@ package accounts
 import (
 	"image"
 
-	"github.com/gookit/event"
 	"vigilantMonitorServer/internal/database/models"
 	"vigilantMonitorServer/internal/dbcore"
 	"vigilantMonitorServer/internal/eventType"
+
+	"github.com/gookit/event"
 	"github.com/pquerna/otp/totp"
 )
 
 var (
-	TwoFactorIssuer = "Komari Monitor"
+	TwoFactorIssuer = "vigilant Monitor"
 )
 
 func Generate2Fa() (string, image.Image, error) {

@@ -20,7 +20,7 @@ MYSQL_USER="${MYSQL_USER:-komari}"
 MYSQL_PASS="${MYSQL_PASS:-}"
 MYSQL_DB="${MYSQL_DB:-komari}"
 
-echo -e "${BLUE}=== Komari Monitor: MySQL Migration Verification ===${NC}"
+echo -e "${BLUE}=== vigilant Monitor: MySQL Migration Verification ===${NC}"
 echo ""
 
 # Check if mysql client is installed
@@ -197,6 +197,6 @@ echo -e "${GREEN}Migration verification completed successfully!${NC}"
 echo ""
 echo -e "${YELLOW}Next steps:${NC}"
 echo "  1. Update Komari configuration to use MySQL"
-echo "  2. Restart Komari Monitor"
+echo "  2. Restart vigilant Monitor"
 echo "  3. Test login and functionality"
 echo "  4. Verify data in web interface"

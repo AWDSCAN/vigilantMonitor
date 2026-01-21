@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# SQLite to MySQL Migration Script for Komari Monitor
+# SQLite to MySQL Migration Script for vigilant Monitor
 # This script migrates data from SQLite to MySQL while preserving all data
 #
 # Usage: ./migrate_sqlite_to_mysql.sh
@@ -22,7 +22,7 @@ MYSQL_USER="${MYSQL_USER:-root}"
 MYSQL_PASS="${MYSQL_PASS:-}"
 MYSQL_DB="${MYSQL_DB:-komari}"
 
-echo -e "${GREEN}=== Komari Monitor: SQLite to MySQL Migration ===${NC}"
+echo -e "${GREEN}=== vigilant Monitor: SQLite to MySQL Migration ===${NC}"
 echo ""
 
 # Check if SQLite database exists
@@ -144,6 +144,6 @@ echo "     export KOMARI_DB_USER=$MYSQL_USER"
 echo "     export KOMARI_DB_PASS=your_password"
 echo "     export KOMARI_DB_NAME=$MYSQL_DB"
 echo ""
-echo "  2. Restart Komari Monitor"
+echo "  2. Restart vigilant Monitor"
 echo ""
 echo -e "${YELLOW}Note: Keep your SQLite backup until you verify everything works correctly${NC}"

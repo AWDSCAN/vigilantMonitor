@@ -16,7 +16,7 @@ func main() {
 		logutil.SetupGlobalLogger(slog.LevelInfo)
 	}
 
-	log.Printf("Komari Monitor %s (hash: %s)", conf.Version, conf.CommitHash)
+	log.Printf("vigilant Monitor %s (hash: %s)", conf.Version, conf.CommitHash)
 
 	cmd.Execute()
 }

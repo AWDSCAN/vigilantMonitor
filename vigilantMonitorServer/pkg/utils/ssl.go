@@ -34,7 +34,7 @@ type SSLCertConfig struct {
 // DefaultSSLCertConfig 返回默认SSL证书配置
 func DefaultSSLCertConfig() SSLCertConfig {
 	return SSLCertConfig{
-		Organization: "Komari Monitor",
+		Organization: "vigilant Monitor",
 		Country:      "US",
 		Province:     "State",
 		Locality:     "City",

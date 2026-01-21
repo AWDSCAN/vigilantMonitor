@@ -1,6 +1,6 @@
 # Docker Compose 使用指南
 
-本文档说明如何使用 Docker Compose 部署 Komari Monitor，支持 SQLite 和 MySQL 两种数据库模式。
+本文档说明如何使用 Docker Compose 部署 vigilant Monitor，支持 SQLite 和 MySQL 两种数据库模式。
 
 ## 📦 快速开始
 
@@ -53,7 +53,7 @@ environment:
 **强烈建议在生产环境修改默认密码！**
 
 ```yaml
-# Komari Monitor 服务
+# vigilant Monitor 服务
 environment:
   - KOMARI_DB_USER=komari
   - KOMARI_DB_PASS=your_secure_password  # 修改此处

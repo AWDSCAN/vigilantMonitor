@@ -13,8 +13,9 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/gin-gonic/gin"
 	"vigilantMonitorServer/internal/conf"
+
+	"github.com/gin-gonic/gin"
 )
 
 //go:embed dist
@@ -71,16 +72,16 @@ func UpdateIndex(cfg conf.V1Struct) {
 func applyCustomizations(htmlContent string, cfg conf.V1Struct) string {
 	var titleReplacement string
 	if cfg.Sitename == "Komari" {
-		titleReplacement = "<title>Komari Monitor</title>"
+		titleReplacement = "<title>vigilant Monitor</title>"
 	} else {
-		titleReplacement = fmt.Sprintf("<title>%s - Komari Monitor</title>", html.EscapeString(cfg.Sitename))
+		titleReplacement = fmt.Sprintf("<title>%s - vigilant Monitor</title>", html.EscapeString(cfg.Sitename))
 	}
 
 	replaceMap := map[string]string{
-		"<title>Komari Monitor</title>": titleReplacement,
-		"A simple server monitor tool.": cfg.Description,
-		"</head>":                       cfg.CustomHead + "</head>",
-		"</body>":                       cfg.CustomBody + "</body>",
+		"<title>vigilant Monitor</title>": titleReplacement,
+		"A simple server monitor tool.":   cfg.Description,
+		"</head>":                         cfg.CustomHead + "</head>",
+		"</body>":                         cfg.CustomBody + "</body>",
 	}
 
 	updated := htmlContent

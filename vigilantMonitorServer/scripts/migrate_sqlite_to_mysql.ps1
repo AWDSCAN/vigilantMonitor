@@ -1,4 +1,4 @@
-# SQLite to MySQL Migration Script for Komari Monitor (PowerShell)
+# SQLite to MySQL Migration Script for vigilant Monitor (PowerShell)
 # This script migrates data from SQLite to MySQL while preserving all data
 #
 # Usage: .\migrate_sqlite_to_mysql.ps1
@@ -15,7 +15,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Komari Monitor: SQLite to MySQL Migration ===" -ForegroundColor Green
+Write-Host "=== vigilant Monitor: SQLite to MySQL Migration ===" -ForegroundColor Green
 Write-Host ""
 
 # Check if SQLite database exists
@@ -175,6 +175,6 @@ Write-Host "       KOMARI_DB_NAME=$MysqlDb"
 Write-Host ""
 Write-Host "  2. Or update Dockerfile environment variables"
 Write-Host ""
-Write-Host "  3. Restart Komari Monitor"
+Write-Host "  3. Restart vigilant Monitor"
 Write-Host ""
 Write-Host "Note: Keep your SQLite backup until you verify everything works correctly" -ForegroundColor Yellow

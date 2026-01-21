@@ -18,7 +18,7 @@ func Default() Config {
 	return Config{
 		Site: Site{
 			Sitename:    "Komari",
-			Description: "Komari Monitor, a simple server monitoring tool.",
+			Description: "vigilant Monitor, a simple server monitoring tool.",
 			AllowCors:   false,
 			Theme:       "default",
 		},

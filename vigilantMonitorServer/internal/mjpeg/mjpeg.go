@@ -20,10 +20,11 @@ import (
 	"sync"
 	"time"
 
-	"github.com/gin-gonic/gin"
 	"vigilantMonitorServer/internal/api_rpc"
 	"vigilantMonitorServer/internal/conf"
 	"vigilantMonitorServer/internal/database/models"
+
+	"github.com/gin-gonic/gin"
 	"golang.org/x/image/font"
 	"golang.org/x/image/font/basicfont"
 	"golang.org/x/image/font/opentype"
@@ -122,7 +123,7 @@ var langEN = langPack{
 	LongTerm:        "Long-term",
 	Expired:         "Expired",
 	LastUpdate:      "Last Update: ",
-	PoweredBy:       "Powered by Komari Monitor",
+	PoweredBy:       "Powered by vigilant Monitor",
 	PreparingMJPEG:  "Preparing MJPEG Stream",
 	DownloadingFont: "Downloading font %s / %s",
 	SpeedRemaining:  "Speed %s, %ds remaining",
@@ -162,7 +163,7 @@ var langZH = langPack{
 	LongTerm:        "长期",
 	Expired:         "已过期",
 	LastUpdate:      "最后更新：",
-	PoweredBy:       "Powered by Komari Monitor",
+	PoweredBy:       "Powered by vigilant Monitor",
 	PreparingMJPEG:  "Preparing MJPEG Stream",
 	DownloadingFont: "Downloading font %s / %s",
 	SpeedRemaining:  "Speed %s, %ds remaining",
@@ -667,7 +668,7 @@ func renderStatusTable(ctx context.Context, lang string, tzOffset *int, fontErr 
 	// 标题
 	siteName := conf.Conf.Site.Sitename
 	if siteName == "" {
-		siteName = "Komari Monitor"
+		siteName = "vigilant Monitor"
 	}
 	fontMutex.RLock()
 	boldFace := fontFaceBold
@@ -838,7 +839,7 @@ func renderStatusTableWithBasicFont(ctx context.Context, lang string, tzOffset *
 	// 标题
 	siteName := conf.Conf.Site.Sitename
 	if siteName == "" {
-		siteName = "Komari Monitor"
+		siteName = "vigilant Monitor"
 	}
 
 	drawStringBasic(img, siteName, padding+5, y+titleFontSize, color.Black)

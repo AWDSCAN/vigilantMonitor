@@ -11,7 +11,7 @@ param(
 
 $ErrorActionPreference = "Stop"
 
-Write-Host "=== Komari Monitor: MySQL Migration Verification ===" -ForegroundColor Blue
+Write-Host "=== vigilant Monitor: MySQL Migration Verification ===" -ForegroundColor Blue
 Write-Host ""
 
 # Check if mysql.exe is available
@@ -197,6 +197,6 @@ Write-Host "Migration verification completed successfully!" -ForegroundColor Gre
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Yellow
 Write-Host "  1. Update Komari configuration to use MySQL"
-Write-Host "  2. Restart Komari Monitor"
+Write-Host "  2. Restart vigilant Monitor"
 Write-Host "  3. Test login and functionality"
 Write-Host "  4. Verify data in web interface"
