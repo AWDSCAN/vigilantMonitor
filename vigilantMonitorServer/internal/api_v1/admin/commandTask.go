@@ -42,16 +42,21 @@ func CreateCommandTask(c *gin.Context) {
 	}
 
 	if err := c.ShouldBindJSON(&req); err != nil {
+		log.Printf("[ERROR] CreateCommandTask - Failed to bind JSON: %v", err)
 		resp.RespondError(c, 400, "Invalid request: "+err.Error())
 		return
 	}
+
+	log.Printf("[INFO] CreateCommandTask - Request: command=%s, target_os=%s, target_clients=%v", req.Command, req.TargetOS, req.TargetClients)
 
 	// 生成任务ID
 	taskID := utils.GenerateRandomString(16)
 
 	// 获取所有在线客户端
 	connectedClients := ws.GetConnectedClients()
+	log.Printf("[INFO] CreateCommandTask - Connected clients count: %d", len(connectedClients))
 	if len(connectedClients) == 0 {
+		log.Printf("[ERROR] CreateCommandTask - No clients are currently online")
 		resp.RespondError(c, 400, "No clients are currently online")
 		return
 	}
@@ -97,9 +102,12 @@ func CreateCommandTask(c *gin.Context) {
 	}
 
 	if len(targetClients) == 0 {
+		log.Printf("[ERROR] CreateCommandTask - No matching online clients found. target_os=%s, target_clients=%v", req.TargetOS, req.TargetClients)
 		resp.RespondError(c, 400, "No matching online clients found")
 		return
 	}
+
+	log.Printf("[INFO] CreateCommandTask - Target clients determined: %v (count: %d)", targetClients, len(targetClients))
 
 	// 创建命令任务记录
 	userUUID, _ := c.Get("uuid")

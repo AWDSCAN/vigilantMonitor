@@ -244,12 +244,14 @@ const ExecContent = () => {
             };
             
             // 如果指定了操作系统，按OS批量执行
-            if (targetOS) {
+            if (targetOS && targetOS !== "custom") {
                 requestBody.target_os = targetOS;
             } else if (selectedNodes.length > 0) {
                 // 否则按选中的节点执行
                 requestBody.target_clients = selectedNodes;
             }
+
+            console.log("发送命令请求:", requestBody);
 
             const response = await fetch("/api/admin/command/create", {
                 method: "POST",
