@@ -225,11 +225,49 @@ $DownloadUrl = "$ServerEndpoint/api/agent/download/$BinaryName"
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
 Log-Step "Downloading $BinaryName from server..."
 Log-Info "URL: $DownloadUrl"
+
+# Check if we need to skip certificate validation (for self-signed certs)
+$skipCertCheck = $vigilantMonitorArgs -contains "--ignore-unsafe-cert" -or $vigilantMonitorArgs -contains "-u"
+
 try {
-    Invoke-WebRequest -Uri $DownloadUrl -OutFile $AgentPath -UseBasicParsing
+    if ($skipCertCheck) {
+        Log-Warning "Skipping certificate validation for download (--ignore-unsafe-cert detected)"
+        # For PowerShell 6+ (Core)
+        if ($PSVersionTable.PSVersion.Major -ge 6) {
+            Invoke-WebRequest -Uri $DownloadUrl -OutFile $AgentPath -UseBasicParsing -SkipCertificateCheck
+        }
+        # For PowerShell 5.1 and earlier (Windows PowerShell)
+        else {
+            # Temporarily disable certificate validation
+            if (-not ([System.Management.Automation.PSTypeName]'TrustAllCertsPolicy').Type) {
+                Add-Type @"
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(
+        ServicePoint srvPoint, X509Certificate certificate,
+        WebRequest request, int certificateProblem) {
+        return true;
+    }
+}
+"@
+            }
+            $originalPolicy = [System.Net.ServicePointManager]::CertificatePolicy
+            [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy
+            Invoke-WebRequest -Uri $DownloadUrl -OutFile $AgentPath -UseBasicParsing
+            [System.Net.ServicePointManager]::CertificatePolicy = $originalPolicy
+        }
+    }
+    else {
+        Invoke-WebRequest -Uri $DownloadUrl -OutFile $AgentPath -UseBasicParsing
+    }
 }
 catch {
     Log-Error "Download failed: $_"
+    if (-not $skipCertCheck -and $_.Exception.Message -like "*SSL/TLS*") {
+        Log-Warning "This appears to be an SSL/TLS certificate error."
+        Log-Warning "If you're using a self-signed certificate, add the '--ignore-unsafe-cert' parameter to the installation command."
+    }
     exit 1
 }
 Log-Success "Downloaded and saved to $AgentPath"

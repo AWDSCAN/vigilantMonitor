@@ -619,9 +619,19 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
         finalCommand = `wget -qO- ${scriptUrl} | sudo bash -s -- ` + args.join(" ");
         break;
       case "windows":
+        // Build SSL bypass prefix for self-signed certificates
+        const sslBypass = `if (-not ([System.Management.Automation.PSTypeName]'TrustAllCertsPolicy').Type) { Add-Type @'
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem) { return true; }
+}
+'@ }; [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy; `;
+        
         finalCommand =
           `powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ` +
-          `"iwr '${scriptUrl}'` +
+          `"${sslBypass}` +
+          `iwr '${scriptUrl}'` +
           ` -UseBasicParsing -OutFile 'install.ps1'; &` +
           ` '.\\install.ps1'`;
         args.forEach((arg) => {

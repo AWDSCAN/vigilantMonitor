@@ -305,8 +305,19 @@ mkdir -p "$target_dir"
 log_step "Downloading $file_name from server..."
 log_info "URL: ${CYAN}$download_url${NC}"
 
-if ! curl -L -o "$vigilantMonitor_agent_path" "$download_url"; then
+# Check if we need to skip certificate validation (for self-signed certs)
+curl_opts="-L"
+if echo "$vigilantMonitor_args" | grep -q -- "--ignore-unsafe-cert\|^-u\| -u "; then
+    log_warning "Skipping certificate validation for download (--ignore-unsafe-cert detected)"
+    curl_opts="$curl_opts -k"
+fi
+
+if ! curl $curl_opts -o "$vigilantMonitor_agent_path" "$download_url"; then
     log_error "Download failed"
+    if [ -z "$(echo "$curl_opts" | grep -o '\-k')" ] && echo "$download_url" | grep -q "^https://"; then
+        log_warning "This appears to be an HTTPS connection failure."
+        log_warning "If you're using a self-signed certificate, add the '--ignore-unsafe-cert' parameter to the installation command."
+    fi
     exit 1
 fi
 

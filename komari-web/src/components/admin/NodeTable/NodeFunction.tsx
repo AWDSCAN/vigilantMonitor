@@ -87,9 +87,19 @@ export function ActionsCell({ row }: { row: Row<z.infer<typeof schema>> }) {
           args.join(" ");
         break;
       case "windows":
+        // Build SSL bypass prefix for self-signed certificates (GitHub URLs typically don't need this, but included for consistency)
+        const sslBypass = `if (-not ([System.Management.Automation.PSTypeName]'TrustAllCertsPolicy').Type) { Add-Type @'
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
+public class TrustAllCertsPolicy : ICertificatePolicy {
+    public bool CheckValidationResult(ServicePoint srvPoint, X509Certificate certificate, WebRequest request, int certificateProblem) { return true; }
+}
+'@ }; [System.Net.ServicePointManager]::CertificatePolicy = New-Object TrustAllCertsPolicy; `;
+        
         finalCommand =
           `powershell.exe -NoProfile -ExecutionPolicy Bypass -Command ` +
-          `"iwr 'https://raw.githubusercontent.com/狰察-monitor/vigilantMonitor-agent/refs/heads/main/install.ps1'` +
+          `"${sslBypass}` +
+          `iwr 'https://raw.githubusercontent.com/狰察-monitor/vigilantMonitor-agent/refs/heads/main/install.ps1'` +
           ` -UseBasicParsing -OutFile 'install.ps1'; &` +
           ` '.\\install.ps1'`;
         args.forEach((arg) => {
