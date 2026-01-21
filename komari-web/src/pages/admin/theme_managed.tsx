@@ -47,7 +47,7 @@ const ThemeManaged: React.FC = () => {
             setLoading(true);
             setError(null);
             try {
-                const resp = await fetch(`/themes/${theme}/komari-theme.json`, { cache: 'no-cache' });
+                const resp = await fetch(`/themes/${theme}/狰察-theme.json`, { cache: 'no-cache' });
                 if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
                 const data: ThemeConfigResponse = await resp.json();
                 if (!data.configuration?.data) {

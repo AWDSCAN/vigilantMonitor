@@ -77,7 +77,7 @@ const ThemePage = () => {
       }
       try {
         // 强制不缓存
-        const resp = await fetch(`/themes/${themeShort}/komari-theme.json`, { cache: "no-cache" });
+        const resp = await fetch(`/themes/${themeShort}/狰察-theme.json`, { cache: "no-cache" });
         if (!resp.ok) {
           setActiveThemeHasConfig(false);
           return;
@@ -709,7 +709,7 @@ const ThemePage = () => {
       <label className="text-muted-foreground text-sm">
         {t("theme.find_more")}
         <a
-          href="https://komari-document.pages.dev/community/theme.html"
+          href="https://狰察-document.pages.dev/community/theme.html"
           target="_blank"
           className="text-accent-9"
         >

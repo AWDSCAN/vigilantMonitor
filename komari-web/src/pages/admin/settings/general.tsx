@@ -318,7 +318,7 @@ const ApiCard = ({ settings }: { settings: SettingsResponse }) => {
           color="mint"
           onClick={() => {
             window.open(
-              "https://komari-document.pages.dev/install/agent-ad.html",
+              "https://狰察-document.pages.dev/install/agent-ad.html",
               "_blank"
             );
           }}

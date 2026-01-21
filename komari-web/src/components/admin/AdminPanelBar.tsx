@@ -81,7 +81,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
         return;
       }
       try {
-        const resp = await fetch(`/themes/${currentTheme}/komari-theme.json`, {
+        const resp = await fetch(`/themes/${currentTheme}/狰察-theme.json`, {
           cache: "no-cache",
         });
         if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
@@ -159,7 +159,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
     async function loadReleases() {
       try {
         const resp = await fetch(
-          "https://api.github.com/repos/komari-monitor/komari/releases?per_page=100",
+          "https://api.github.com/repos/狰察-monitor/狰察/releases?per_page=100",
           {
             headers: {
               Accept: "application/vnd.github+json",
@@ -299,7 +299,7 @@ const AdminPanelBar = ({ content }: AdminPanelBarProps) => {
                 <TablerMenu2 />
               </IconButton>
               <a href="/" target="_blank" rel="noopener noreferrer">
-                <label className="text-xl font-bold">Komari</label>
+                <label className="text-xl font-bold">狰察</label>
               </a>
               {updateAvailable && releasesSince.length > 0 && (
                 <Tips
