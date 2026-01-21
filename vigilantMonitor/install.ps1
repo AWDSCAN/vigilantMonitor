@@ -1,4 +1,4 @@
-# Windows PowerShell installation script for Komari Agent
+# Windows PowerShell installation script for vigilantMonitor Agent
 
 # Logging functions with colors
 function Log-Info { param([string]$Message) Write-Host "$Message"    -ForegroundColor Cyan }
@@ -9,10 +9,10 @@ function Log-Step { param([string]$Message) Write-Host "$Message"    -Foreground
 function Log-Config { param([string]$Message) Write-Host "- $Message"    -ForegroundColor White }
 
 # Default parameters
-$InstallDir = Join-Path $Env:ProgramFiles "Komari"
+$InstallDir = Join-Path $Env:ProgramFiles "vigilantMonitor"
 $ServiceName = "vigilantMonitor-agent"
 $GitHubProxy = ""
-$KomariArgs = @()
+$vigilantMonitorArgs = @()
 $InstallVersion = ""
 
 # Parse script arguments
@@ -22,7 +22,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--install-service-name" { $ServiceName = $args[$i + 1]; $i++; continue }
         "--install-ghproxy" { $GitHubProxy = $args[$i + 1]; $i++; continue }
         "--install-version" { $InstallVersion = $args[$i + 1]; $i++; continue }
-        Default { $KomariArgs += $args[$i] }
+        Default { $vigilantMonitorArgs += $args[$i] }
     }
 }
 
@@ -160,7 +160,7 @@ Log-Step "Installation configuration:"
 Log-Config "Service name: $ServiceName"
 Log-Config "Install directory: $InstallDir"
 Log-Config "GitHub proxy: $ProxyDisplay"
-Log-Config "Agent arguments: $($KomariArgs -join ' ')"
+Log-Config "Agent arguments: $($vigilantMonitorArgs -join ' ')"
 if ($InstallVersion -ne "") {
     Log-Config "Specified agent version: $InstallVersion"
 } else {
@@ -212,7 +212,7 @@ if ($InstallVersion -ne "") {
     $versionToInstall = $InstallVersion
 }
 else {
-    $ApiUrl = "https://api.github.com/repos/komari-monitor/vigilantMonitor-agent/releases/latest"
+    $ApiUrl = "https://api.github.com/repos/vigilantMonitor-monitor/vigilantMonitor-agent/releases/latest"
     try {
         Log-Step "Fetching latest release version from GitHub API..."
         $release = Invoke-RestMethod -Uri $ApiUrl -UseBasicParsing
@@ -224,11 +224,11 @@ else {
         exit 1
     }
 }
-Log-Success "Installing Komari Agent version: $versionToInstall"
+Log-Success "Installing vigilantMonitor Agent version: $versionToInstall"
 
 # Construct download URL
 $BinaryName = "vigilantMonitor-agent-windows-$arch.exe"
-$DownloadUrl = if ($GitHubProxy) { "$GitHubProxy/https://github.com/komari-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" } else { "https://github.com/komari-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" }
+$DownloadUrl = if ($GitHubProxy) { "$GitHubProxy/https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" } else { "https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" }
 
 # Download and install
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
@@ -244,12 +244,12 @@ Log-Success "Downloaded and saved to $AgentPath"
 
 # Register and start service
 Log-Step "Configuring Windows service with nssm..."
-$argString = $KomariArgs -join ' '
+$argString = $vigilantMonitorArgs -join ' '
 # Ensure InstallDir and AgentPath are quoted if they contain spaces
 $quotedAgentPath = "`"$AgentPath`""
 nssm install $ServiceName $quotedAgentPath $argString
 # Set display name and startup type using nssm
-nssm set $ServiceName DisplayName "Komari Agent Service"
+nssm set $ServiceName DisplayName "vigilantMonitor Agent Service"
 nssm set $ServiceName Start SERVICE_AUTO_START
 nssm set $ServiceName AppExit Default Restart
 nssm set $ServiceName AppRestartDelay 5000
@@ -257,6 +257,6 @@ nssm set $ServiceName AppRestartDelay 5000
 nssm start $ServiceName
 Log-Success "Service $ServiceName installed and started using nssm."
 
-Log-Success "Komari Agent installation completed!"
+Log-Success "vigilantMonitor Agent installation completed!"
 Log-Config "Service name: $ServiceName"
 Log-Config "Arguments: $argString"

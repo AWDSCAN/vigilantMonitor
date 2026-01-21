@@ -28,8 +28,8 @@ var flags = pkg_flags.GlobalConfig
 
 var RootCmd = &cobra.Command{
 	Use:   "vigilantMonitor-agent",
-	Short: "komari agent",
-	Long:  `komari agent`,
+	Short: "vigilantMonitor agent",
+	Long:  `vigilantMonitor agent`,
 	Run: func(cmd *cobra.Command, args []string) {
 		loadFromEnv() // 从环境变量加载配置，覆盖解析
 		if flags.ConfigFile != "" {
@@ -58,7 +58,7 @@ var RootCmd = &cobra.Command{
 		}
 
 		if !flags.DisableWebSsh {
-			go WarnKomariRunning()
+			go WarnvigilantMonitorRunning()
 		}
 
 		if flags.MonthRotate != 0 {
@@ -78,7 +78,7 @@ var RootCmd = &cobra.Command{
 			}
 		}
 
-		log.Println("Komari Agent", update.CurrentVersion)
+		log.Println("vigilantMonitor Agent", update.CurrentVersion)
 		log.Println("Github Repo:", update.Repo)
 
 		// 设置 DNS 解析行为

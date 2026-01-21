@@ -37,7 +37,7 @@ log_config() {
 
 # Default values
 service_name="vigilantMonitor-agent"
-target_dir="/opt/komari"
+target_dir="/opt/vigilantMonitor"
 github_proxy=""
 install_version="" # New parameter for specifying version
  
@@ -47,10 +47,10 @@ os_type=$(uname -s)
 case $os_type in
     Darwin)
         os_name="darwin"
-        target_dir="/usr/local/komari"  # Use /usr/local on macOS
+        target_dir="/usr/local/vigilantMonitor"  # Use /usr/local on macOS
         # Check if we can write to /usr/local, fallback to user directory
         if [ ! -w "/usr/local" ] && [ "$EUID" -ne 0 ]; then
-            target_dir="$HOME/.komari"
+            target_dir="$HOME/.vigilantMonitor"
             log_info "No write permission to /usr/local, using user directory: $target_dir"
         fi
         ;;
@@ -62,7 +62,7 @@ case $os_type in
         ;;
     MINGW*|MSYS*|CYGWIN*)
         os_name="windows"
-        target_dir="/c/komari"  # Use C:\komari on Windows
+        target_dir="/c/vigilantMonitor"  # Use C:\vigilantMonitor on Windows
         ;;
     *)
         log_error "Unsupported operating system: $os_type"
@@ -71,7 +71,7 @@ case $os_type in
 esac
 
 # Parse install-specific arguments
-komari_args=""
+vigilantMonitor_args=""
 while [[ $# -gt 0 ]]; do
     case $1 in
         --install-dir)
@@ -95,17 +95,17 @@ while [[ $# -gt 0 ]]; do
             shift
             ;;
         *)
-            # Non-install arguments go to komari_args
-            komari_args="$komari_args $1"
+            # Non-install arguments go to vigilantMonitor_args
+            vigilantMonitor_args="$vigilantMonitor_args $1"
             shift
             ;;
     esac
 done
 
-# Remove leading space from komari_args if present
-komari_args="${komari_args# }"
+# Remove leading space from vigilantMonitor_args if present
+vigilantMonitor_args="${vigilantMonitor_args# }"
 
-komari_agent_path="${target_dir}/agent"
+vigilantMonitor_agent_path="${target_dir}/agent"
 
 # macOS doesn't always require sudo for everything
 if [ "$os_name" = "darwin" ] && command -v brew >/dev/null 2>&1; then
@@ -121,14 +121,14 @@ if [ "$EUID" -ne 0 ] && [ "$require_root_for_deps" = true ]; then
 fi
 
 echo -e "${WHITE}===========================================${NC}"
-echo -e "${WHITE}    Komari Agent Installation Script     ${NC}"
+echo -e "${WHITE}    vigilantMonitor Agent Installation Script     ${NC}"
 echo -e "${WHITE}===========================================${NC}"
 echo ""
 log_config "Installation configuration:"
 log_config "  Service name: ${GREEN}$service_name${NC}"
 log_config "  Install directory: ${GREEN}$target_dir${NC}"
 log_config "  GitHub proxy: ${GREEN}${github_proxy:-"(direct)"}${NC}"
-log_config "  Binary arguments: ${GREEN}$komari_args${NC}"
+log_config "  Binary arguments: ${GREEN}$vigilantMonitor_args${NC}"
 if [ -n "$install_version" ]; then
     log_config "  Specified agent version: ${GREEN}$install_version${NC}"
 else
@@ -163,8 +163,8 @@ uninstall_previous() {
         rm -f "/etc/init/${service_name}.conf"
     elif [ "$os_name" = "darwin" ] && command -v launchctl >/dev/null 2>&1; then
         # macOS launchd service - check both system and user locations
-        system_plist="/Library/LaunchDaemons/com.komari.${service_name}.plist"
-        user_plist="$HOME/Library/LaunchAgents/com.komari.${service_name}.plist"
+        system_plist="/Library/LaunchDaemons/com.vigilantMonitor.${service_name}.plist"
+        user_plist="$HOME/Library/LaunchAgents/com.vigilantMonitor.${service_name}.plist"
         
         if [ -f "$system_plist" ]; then
             log_info "Stopping and removing existing system launchd service..."
@@ -180,9 +180,9 @@ uninstall_previous() {
     fi
     
     # Remove old binary if it exists
-    if [ -f "$komari_agent_path" ]; then
+    if [ -f "$vigilantMonitor_agent_path" ]; then
         log_info "Removing old binary..."
-        rm -f "$komari_agent_path"
+        rm -f "$vigilantMonitor_agent_path"
     fi
 }
 
@@ -297,10 +297,10 @@ fi
 
 if [ -n "$github_proxy" ]; then
     # Use proxy for GitHub releases
-    download_url="${github_proxy}/https://github.com/komari-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
+    download_url="${github_proxy}/https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
 else
     # Direct access to GitHub releases
-    download_url="https://github.com/komari-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
+    download_url="https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
 fi
 
 log_step "Creating installation directory: ${GREEN}$target_dir${NC}"
@@ -314,14 +314,14 @@ else
     log_step "Downloading $file_name directly..."
     log_info "URL: ${CYAN}$download_url${NC}"
 fi
-if ! curl -L -o "$komari_agent_path" "$download_url"; then
+if ! curl -L -o "$vigilantMonitor_agent_path" "$download_url"; then
     log_error "Download failed"
     exit 1
 fi
 
 # Set executable permissions
-chmod +x "$komari_agent_path"
-log_success "vigilantMonitor-agent installed to ${GREEN}$komari_agent_path${NC}"
+chmod +x "$vigilantMonitor_agent_path"
+log_success "vigilantMonitor-agent installed to ${GREEN}$vigilantMonitor_agent_path${NC}"
 
 # Detect init system and configure service
 log_step "Configuring system service..."
@@ -424,12 +424,12 @@ if [ "$init_system" = "nixos" ]; then
     log_info "Please add the following to your NixOS configuration:"
     echo ""
     echo -e "${CYAN}systemd.services.${service_name} = {${NC}"
-    echo -e "${CYAN}  description = \"Komari Agent Service\";${NC}"
+    echo -e "${CYAN}  description = \"vigilantMonitor Agent Service\";${NC}"
     echo -e "${CYAN}  after = [ \"network.target\" ];${NC}"
     echo -e "${CYAN}  wantedBy = [ \"multi-user.target\" ];${NC}"
     echo -e "${CYAN}  serviceConfig = {${NC}"
     echo -e "${CYAN}    Type = \"simple\";${NC}"
-    echo -e "${CYAN}    ExecStart = \"${komari_agent_path} ${komari_args}\";${NC}"
+    echo -e "${CYAN}    ExecStart = \"${vigilantMonitor_agent_path} ${vigilantMonitor_args}\";${NC}"
     echo -e "${CYAN}    WorkingDirectory = \"${target_dir}\";${NC}"
     echo -e "${CYAN}    Restart = \"always\";${NC}"
     echo -e "${CYAN}    User = \"root\";${NC}"
@@ -445,10 +445,10 @@ elif [ "$init_system" = "openrc" ]; then
     cat > "$service_file" << EOF
 #!/sbin/openrc-run
 
-name="Komari Agent Service"
-description="Komari monitoring agent"
-command="${komari_agent_path}"
-command_args="${komari_args}"
+name="vigilantMonitor Agent Service"
+description="vigilantMonitor monitoring agent"
+command="${vigilantMonitor_agent_path}"
+command_args="${vigilantMonitor_args}"
 command_user="root"
 directory="${target_dir}"
 pidfile="/run/${service_name}.pid"
@@ -472,12 +472,12 @@ elif [ "$init_system" = "systemd" ]; then
     service_file="/etc/systemd/system/${service_name}.service"
     cat > "$service_file" << EOF
 [Unit]
-Description=Komari Agent Service
+Description=vigilantMonitor Agent Service
 After=network.target
 
 [Service]
 Type=simple
-ExecStart=${komari_agent_path} ${komari_args}
+ExecStart=${vigilantMonitor_agent_path} ${vigilantMonitor_args}
 WorkingDirectory=${target_dir}
 Restart=always
 User=root
@@ -503,8 +503,8 @@ STOP=10
 
 USE_PROCD=1
 
-PROG="${komari_agent_path}"
-ARGS="${komari_args}"
+PROG="${vigilantMonitor_agent_path}"
+ARGS="${vigilantMonitor_args}"
 
 start_service() {
     procd_open_instance
@@ -539,7 +539,7 @@ elif [ "$init_system" = "launchd" ]; then
     if [[ "$target_dir" =~ ^/Users/.* ]] || [ "$EUID" -ne 0 ]; then
         # User-level service (LaunchAgent)
         plist_dir="$HOME/Library/LaunchAgents"
-        plist_file="$plist_dir/com.komari.${service_name}.plist"
+        plist_file="$plist_dir/com.vigilantMonitor.${service_name}.plist"
         log_info "Installing as user-level service (LaunchAgent)"
         mkdir -p "$plist_dir"
         service_user="$(whoami)"
@@ -547,7 +547,7 @@ elif [ "$init_system" = "launchd" ]; then
     else
         # System-level service (LaunchDaemon)
         plist_dir="/Library/LaunchDaemons"
-        plist_file="$plist_dir/com.komari.${service_name}.plist"
+        plist_file="$plist_dir/com.vigilantMonitor.${service_name}.plist"
         log_info "Installing as system-level service (LaunchDaemon)"
         service_user="root"
         log_dir="/var/log"
@@ -560,15 +560,15 @@ elif [ "$init_system" = "launchd" ]; then
 <plist version="1.0">
 <dict>
     <key>Label</key>
-    <string>com.komari.${service_name}</string>
+    <string>com.vigilantMonitor.${service_name}</string>
     <key>ProgramArguments</key>
     <array>
-        <string>${komari_agent_path}</string>
+        <string>${vigilantMonitor_agent_path}</string>
 EOF
     
     # Add program arguments if provided
-    if [ -n "$komari_args" ]; then
-        echo "$komari_args" | xargs -n1 printf "        <string>%s</string>\n" >> "$plist_file"
+    if [ -n "$vigilantMonitor_args" ]; then
+        echo "$vigilantMonitor_args" | xargs -n1 printf "        <string>%s</string>\n" >> "$plist_file"
     fi
     
     cat >> "$plist_file" << EOF
@@ -612,8 +612,8 @@ elif [ "$init_system" = "upstart" ]; then
     log_info "Using upstart for service management"
     service_file="/etc/init/${service_name}.conf"
     cat > "$service_file" << EOF
-# KOMARI Agent
-description "Komari Agent Service"
+# vigilantMonitor Agent
+description "vigilantMonitor Agent Service"
 
 chdir ${target_dir}
 start on filesystem or runlevel [2345]
@@ -626,12 +626,12 @@ umask 022
 console none
 
 pre-start script
-    test -x ${komari_agent_path} || { stop; exit 0; }
+    test -x ${vigilantMonitor_agent_path} || { stop; exit 0; }
 end script
 
 # Start
 script
-    exec ${komari_agent_path} ${komari_args}
+    exec ${vigilantMonitor_agent_path} ${vigilantMonitor_args}
 end script
 EOF
     # enable Upstart unit
@@ -654,5 +654,5 @@ else
     log_success "vigilantMonitor-agent installation completed!"
 fi
 log_config "Service: ${GREEN}$service_name${NC}"
-log_config "Arguments: ${GREEN}$komari_args${NC}"
+log_config "Arguments: ${GREEN}$vigilantMonitor_args${NC}"
 echo -e "${WHITE}===========================================${NC}"
