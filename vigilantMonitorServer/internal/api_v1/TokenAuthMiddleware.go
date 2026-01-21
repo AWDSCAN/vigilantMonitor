@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	clients "vigilantMonitorServer/internal/client"
+
 	"gorm.io/gorm"
 
 	"github.com/gin-gonic/gin"
@@ -59,7 +60,7 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
-		exists, err := checkTokenExists(token)
+		exists, uuid, err := checkTokenExists(token)
 		if err != nil {
 			c.AbortWithStatusJSON(http.StatusInternalServerError, gin.H{"status": "error", "error": "failed to validate token"})
 			return
@@ -69,21 +70,24 @@ func TokenAuthMiddleware() gin.HandlerFunc {
 			return
 		}
 
+		// 将客户端UUID存储到上下文中，供后续处理器使用
+		c.Set("client_uuid", uuid)
+
 		c.Next()
 	}
 }
 
-func checkTokenExists(token string) (bool, error) {
-	_, err := clients.GetClientUUIDByToken(token)
+func checkTokenExists(token string) (bool, string, error) {
+	uuid, err := clients.GetClientUUIDByToken(token)
 
 	if err == sql.ErrNoRows {
-		return false, nil
+		return false, "", nil
 	}
 	if err == gorm.ErrRecordNotFound {
-		return false, nil
+		return false, "", nil
 	}
 	if err != nil {
-		return false, err
+		return false, "", err
 	}
-	return true, nil
+	return true, uuid, nil
 }

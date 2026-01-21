@@ -9,12 +9,13 @@ import (
 	"strings"
 	"time"
 
-	"github.com/gorilla/websocket"
 	"vigilantMonitor/dnsresolver"
 	"vigilantMonitor/monitoring"
 	"vigilantMonitor/terminal"
 	"vigilantMonitor/utils"
 	"vigilantMonitor/ws"
+
+	"github.com/gorilla/websocket"
 )
 
 func EstablishWebSocketConnection() {
@@ -126,7 +127,7 @@ func handleWebSocketMessages(conn *ws.SafeConn, done chan<- struct{}) {
 			Message string `json:"message"`
 			// Terminal
 			TerminalId string `json:"request_id,omitempty"`
-			// Remote Exec
+			// Remote Exec (旧版)
 			ExecCommand string `json:"command,omitempty"`
 			ExecTaskID  string `json:"task_id,omitempty"`
 			// Ping
@@ -146,6 +147,11 @@ func handleWebSocketMessages(conn *ws.SafeConn, done chan<- struct{}) {
 		}
 		if message.Message == "exec" {
 			go NewTask(message.ExecTaskID, message.ExecCommand)
+			continue
+		}
+		if message.Message == "exec_command" {
+			// 新的命令执行机制（异步执行）
+			go ExecuteCommandTask(message.ExecTaskID, message.ExecCommand)
 			continue
 		}
 		if message.Message == "ping" || message.PingTaskID != 0 || message.PingType != "" || message.PingTarget != "" {

@@ -1,8 +1,6 @@
 package api_v1
 
 import (
-	"github.com/gin-gonic/gin"
-	"github.com/gookit/event"
 	"vigilantMonitorServer/internal/api_v1/admin"
 	"vigilantMonitorServer/internal/api_v1/admin/clipboard"
 	log_api "vigilantMonitorServer/internal/api_v1/admin/log"
@@ -16,6 +14,9 @@ import (
 	"vigilantMonitorServer/internal/api_v1/terminal"
 	"vigilantMonitorServer/internal/conf"
 	"vigilantMonitorServer/internal/eventType"
+
+	"github.com/gin-gonic/gin"
+	"github.com/gookit/event"
 )
 
 func init() {
@@ -60,6 +61,9 @@ func LoadApiV1Routes(r *gin.Engine, conf conf.V1Struct) {
 	r.GET("/api/records/ping", record.GetPingRecords)
 	r.GET("/api/task/ping", task.GetPublicPingTasks)
 
+	// Agent 文件下载（公开路由，不需要认证）
+	r.GET("/api/agent/download/:filename", DownloadAgent)
+
 	// #region Agent
 	r.POST("/api/clients/register", client.RegisterClient)
 	tokenAuthrized := r.Group("/api/clients", TokenAuthMiddleware())
@@ -69,6 +73,7 @@ func LoadApiV1Routes(r *gin.Engine, conf conf.V1Struct) {
 		tokenAuthrized.POST("/report", client.UploadReport)
 		tokenAuthrized.GET("/terminal", client.EstablishConnection)
 		tokenAuthrized.POST("/task/result", client.TaskResult)
+		tokenAuthrized.POST("/command/result", admin.ReceiveCommandResult) // 接收命令执行结果
 	}
 	// #region 管理员
 	r.Use(AdminAuthMiddleware())
@@ -194,6 +199,15 @@ func LoadApiV1Routes(r *gin.Engine, conf conf.V1Struct) {
 			pingTaskGroup.POST("/delete", admin.DeletePingTask)
 			pingTaskGroup.POST("/edit", admin.EditPingTask)
 
+		}
+
+		// command tasks
+		commandGroup := adminAuthrized.Group("/command")
+		{
+			commandGroup.POST("/create", admin.CreateCommandTask)     // 创建并下发命令任务
+			commandGroup.GET("/list", admin.ListCommandTasks)         // 查询任务列表
+			commandGroup.GET("/:task_id", admin.GetCommandTask)       // 查询任务详情
+			commandGroup.DELETE("/:task_id", admin.DeleteCommandTask) // 删除任务
 		}
 
 	}

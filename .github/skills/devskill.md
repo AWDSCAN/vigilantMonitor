@@ -1,4 +1,11 @@
 ---
+name: skill-dev
+description: 开发规范
+---
+
+# Skill Instructions
+
+---
 agent: agent
 ---
 # 文档规范
