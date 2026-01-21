@@ -533,11 +533,7 @@ function DeleteButton({ node }: { node: NodeDetail }) {
   );
 }
 type InstallOptions = {
-  disableWebSsh: boolean;
-  disableAutoUpdate: boolean;
-  ignoreUnsafeCert: boolean;
   memoryIncludeCache: boolean;
-  ghproxy: string;
   dir: string;
   serviceName: string;
   includeNics: string;
@@ -549,11 +545,7 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
   const [selectedPlatform, setSelectedPlatform] =
     React.useState<Platform>("linux");
   const [installOptions, setInstallOptions] = React.useState<InstallOptions>({
-    disableWebSsh: false,
-    disableAutoUpdate: false,
-    ignoreUnsafeCert: false,
     memoryIncludeCache: false,
-    ghproxy: "",
     dir: "",
     serviceName: "",
     includeNics: "",
@@ -562,7 +554,6 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
     monthRotate: "",
   });
 
-  const [enableGhproxy, setEnableGhproxy] = React.useState(false);
   const [enableCustomDir, setEnableCustomDir] = React.useState(false);
   const [enableCustomServiceName, setEnableCustomServiceName] =
     React.useState(false);
@@ -584,27 +575,12 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
     }();
     const token = node.token || "";
     let args = ["-e", host, "-t", token];
+    // 默认启用的选项
+    args.push("--disable-auto-update");
+    args.push("--ignore-unsafe-cert");
     // 根据安装选项生成参数
-    if (installOptions.disableWebSsh) {
-      args.push("--disable-web-ssh");
-    }
-    if (installOptions.disableAutoUpdate) {
-      args.push("--disable-auto-update");
-    }
-    if (installOptions.ignoreUnsafeCert) {
-      args.push("--ignore-unsafe-cert");
-    }
     if (installOptions.memoryIncludeCache) {
       args.push("--memory-include-cache");
-    }
-    if (enableGhproxy && installOptions.ghproxy) {
-      const finalUrl = (
-        installOptions.ghproxy.startsWith("http")
-          ? installOptions.ghproxy
-          : `http://${installOptions.ghproxy}`
-      ).replace(/\/+$/, "");
-      args.push(`--install-ghproxy`);
-      args.push(finalUrl);
     }
     if (enableCustomDir && installOptions.dir) {
       args.push(`--install-dir`);
@@ -635,21 +611,8 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
     if (selectedPlatform === "windows") {
       scriptFile = "install.ps1";
     }
-    let scriptUrl =
-      `https://raw.githubusercontent.com/狰察-monitor/vigilantMonitor-agent/refs/heads/main/${scriptFile}`;
-    if (enableGhproxy) {
-      if (enableGhproxy && installOptions.ghproxy) {
-        scriptUrl = scriptUrl.slice(8); // 去掉 https://
-        if (installOptions.ghproxy.endsWith("/")) {
-          scriptUrl = `${installOptions.ghproxy}${scriptUrl}`;
-        } else {
-          scriptUrl = `${installOptions.ghproxy}/${scriptUrl}`;
-        }
-        if (!scriptUrl.startsWith("http")) {
-          scriptUrl = `http://${scriptUrl}`;
-        }
-      }
-    }
+    // 从服务器下载安装脚本
+    const scriptUrl = `${host}/api/agent/download/${scriptFile}`;
     let finalCommand = "";
     switch (selectedPlatform) {
       case "linux":
@@ -712,72 +675,6 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
             <div className="grid grid-cols-2 gap-2">
               <Flex gap="2" align="center">
                 <Checkbox
-                  checked={installOptions.disableWebSsh}
-                  onCheckedChange={(checked) => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      disableWebSsh: Boolean(checked),
-                    }));
-                  }}
-                />
-                <label
-                  className="text-sm font-normal"
-                  onClick={() => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      disableWebSsh: !prev.disableWebSsh,
-                    }));
-                  }}
-                >
-                  {t("admin.nodeTable.disableWebSsh")}
-                </label>
-              </Flex>
-              <Flex gap="2" align="center">
-                <Checkbox
-                  checked={installOptions.disableAutoUpdate}
-                  onCheckedChange={(checked) => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      disableAutoUpdate: Boolean(checked),
-                    }));
-                  }}
-                ></Checkbox>
-                <label
-                  className="text-sm font-normal"
-                  onClick={() => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      disableAutoUpdate: !prev.disableAutoUpdate,
-                    }));
-                  }}
-                >
-                  {t("admin.nodeTable.disableAutoUpdate", "禁用自动更新")}
-                </label>
-              </Flex>
-              <Flex gap="2" align="center">
-                <Checkbox
-                  checked={installOptions.ignoreUnsafeCert}
-                  onCheckedChange={(checked) => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      ignoreUnsafeCert: Boolean(checked),
-                    }));
-                  }}
-                />
-                <label
-                  className="text-sm font-normal"
-                  onClick={() => {
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      ignoreUnsafeCert: !prev.ignoreUnsafeCert,
-                    }));
-                  }}
-                >
-                  {t("admin.nodeTable.ignoreUnsafeCert", "忽略不安全证书")}
-                </label>
-              </Flex>
-              <Flex gap="2" align="center">
-                <Checkbox
                   checked={installOptions.memoryIncludeCache}
                   onCheckedChange={(checked) => {
                     setInstallOptions((prev) => ({
@@ -803,51 +700,6 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
               </Flex>
             </div>
             <Flex direction="column" gap="2">
-              <Flex gap="2" align="center">
-                <Checkbox
-                  checked={enableGhproxy}
-                  onCheckedChange={(checked) => {
-                    setEnableGhproxy(Boolean(checked));
-                    if (!checked) {
-                      setInstallOptions((prev) => ({
-                        ...prev,
-                        ghproxy: "",
-                      }));
-                    }
-                  }}
-                />
-                <label
-                  className="text-sm font-bold cursor-pointer"
-                  onClick={() => {
-                    setEnableGhproxy(!enableGhproxy);
-                    if (enableGhproxy) {
-                      setInstallOptions((prev) => ({
-                        ...prev,
-                        ghproxy: "",
-                      }));
-                    }
-                  }}
-                >
-                  {t("admin.nodeTable.ghproxy", "GitHub 代理")}
-                </label>
-              </Flex>
-              {enableGhproxy && (
-                <TextField.Root
-                  // placeholder={t(
-                  //   "admin.nodeTable.ghproxy_placeholder",
-                  //   "GitHub 代理，为空则不使用代理"
-                  // )}
-                  placeholder="https://ghfast.top/"
-                  value={installOptions.ghproxy}
-                  onChange={(e) =>
-                    setInstallOptions((prev) => ({
-                      ...prev,
-                      ghproxy: e.target.value,
-                    }))
-                  }
-                />
-              )}
-
               <Flex gap="2" align="center">
                 <Checkbox
                   checked={enableCustomDir}

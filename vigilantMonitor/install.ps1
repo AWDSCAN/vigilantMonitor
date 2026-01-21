@@ -14,6 +14,7 @@ $ServiceName = "vigilantMonitor-agent"
 $GitHubProxy = ""
 $vigilantMonitorArgs = @()
 $InstallVersion = ""
+$ServerEndpoint = ""
 
 # Parse script arguments
 for ($i = 0; $i -lt $args.Count; $i++) {
@@ -22,6 +23,7 @@ for ($i = 0; $i -lt $args.Count; $i++) {
         "--install-service-name" { $ServiceName = $args[$i + 1]; $i++; continue }
         "--install-ghproxy" { $GitHubProxy = $args[$i + 1]; $i++; continue }
         "--install-version" { $InstallVersion = $args[$i + 1]; $i++; continue }
+        "-e" { $ServerEndpoint = $args[$i + 1]; $vigilantMonitorArgs += $args[$i]; $vigilantMonitorArgs += $args[$i + 1]; $i++; continue }
         Default { $vigilantMonitorArgs += $args[$i] }
     }
 }
@@ -206,32 +208,22 @@ function Uninstall-Previous {
 }
 Uninstall-Previous
 
-$versionToInstall = ""
-if ($InstallVersion -ne "") {
-    Log-Info "Attempting to install specified version: $InstallVersion"
-    $versionToInstall = $InstallVersion
+# Check if server endpoint is provided
+if ([string]::IsNullOrWhiteSpace($ServerEndpoint)) {
+    Log-Error "Server endpoint (-e) is required"
+    exit 1
 }
-else {
-    $ApiUrl = "https://api.github.com/repos/vigilantMonitor-monitor/vigilantMonitor-agent/releases/latest"
-    try {
-        Log-Step "Fetching latest release version from GitHub API..."
-        $release = Invoke-RestMethod -Uri $ApiUrl -UseBasicParsing
-        $versionToInstall = $release.tag_name
-        Log-Success "Latest version fetched: $versionToInstall"
-    }
-    catch {
-        Log-Error "Failed to fetch latest version: $_"
-        exit 1
-    }
-}
-Log-Success "Installing vigilantMonitor Agent version: $versionToInstall"
 
-# Construct download URL
+# Remove trailing slash from server endpoint
+$ServerEndpoint = $ServerEndpoint.TrimEnd('/')
+
+# Construct download URL from server
 $BinaryName = "vigilantMonitor-agent-windows-$arch.exe"
-$DownloadUrl = if ($GitHubProxy) { "$GitHubProxy/https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" } else { "https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/download/$versionToInstall/$BinaryName" }
+$DownloadUrl = "$ServerEndpoint/api/agent/download/$BinaryName"
 
 # Download and install
 New-Item -ItemType Directory -Path $InstallDir -Force | Out-Null
+Log-Step "Downloading $BinaryName from server..."
 Log-Info "URL: $DownloadUrl"
 try {
     Invoke-WebRequest -Uri $DownloadUrl -OutFile $AgentPath -UseBasicParsing

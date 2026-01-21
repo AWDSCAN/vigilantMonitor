@@ -72,6 +72,7 @@ esac
 
 # Parse install-specific arguments
 vigilantMonitor_args=""
+server_endpoint=""
 while [[ $# -gt 0 ]]; do
     case $1 in
         --install-dir)
@@ -88,6 +89,11 @@ while [[ $# -gt 0 ]]; do
             ;;
         --install-version)
             install_version="$2"
+            shift 2
+            ;;
+        -e)
+            server_endpoint="$2"
+            vigilantMonitor_args="$vigilantMonitor_args $1 $2"
             shift 2
             ;;
         --install*)
@@ -279,41 +285,26 @@ case $arch in
 esac
 log_info "Detected OS: ${GREEN}$os_name${NC}, Architecture: ${GREEN}$arch${NC}"
 
-version_to_install="latest"
-if [ -n "$install_version" ]; then
-    log_info "Attempting to install specified version: ${GREEN}$install_version${NC}"
-    version_to_install="$install_version"
-else
-    log_info "No version specified, installing the latest version."
-fi
-
-# Construct download URL
+# Construct download URL from server
 file_name="vigilantMonitor-agent-${os_name}-${arch}"
-if [ "$version_to_install" = "latest" ]; then
-    download_path="latest/download"
-else
-    download_path="download/${version_to_install}"
+
+if [ -z "$server_endpoint" ]; then
+    log_error "Server endpoint (-e) is required"
+    exit 1
 fi
 
-if [ -n "$github_proxy" ]; then
-    # Use proxy for GitHub releases
-    download_url="${github_proxy}/https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
-else
-    # Direct access to GitHub releases
-    download_url="https://github.com/vigilantMonitor-monitor/vigilantMonitor-agent/releases/${download_path}/${file_name}"
-fi
+# Remove trailing slash from server_endpoint if present
+server_endpoint="${server_endpoint%/}"
+
+download_url="${server_endpoint}/api/agent/download/${file_name}"
 
 log_step "Creating installation directory: ${GREEN}$target_dir${NC}"
 mkdir -p "$target_dir"
 
-# Download binary
-if [ -n "$github_proxy" ]; then
-    log_step "Downloading $file_name via proxy..."
-    log_info "URL: ${CYAN}$download_url${NC}"
-else
-    log_step "Downloading $file_name directly..."
-    log_info "URL: ${CYAN}$download_url${NC}"
-fi
+# Download binary from server
+log_step "Downloading $file_name from server..."
+log_info "URL: ${CYAN}$download_url${NC}"
+
 if ! curl -L -o "$vigilantMonitor_agent_path" "$download_url"; then
     log_error "Download failed"
     exit 1
