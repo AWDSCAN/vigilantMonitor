@@ -568,10 +568,10 @@ function GenerateCommandButton({ node, settings }: { node: NodeDetail, settings:
       if (!settings.script_domain) {
         return window.location.origin;
       }
-      if (settings.script_domain.startsWith("http")) {
+      if (settings.script_domain.startsWith("https")) {
         return settings.script_domain.replace(/\/+$/, "");
       }
-      return `http://${settings.script_domain.replace(/\/+$/, "")}`;
+      return `https://${settings.script_domain.replace(/\/+$/, "")}`;
     }();
     const token = node.token || "";
     let args = ["-e", host, "-t", token];

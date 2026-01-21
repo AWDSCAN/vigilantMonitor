@@ -21,7 +21,12 @@ import (
 func EstablishWebSocketConnection() {
 
 	websocketEndpoint := strings.TrimSuffix(flags.Endpoint, "/") + "/api/clients/report?token=" + flags.Token
-	websocketEndpoint = "ws" + strings.TrimPrefix(websocketEndpoint, "http")
+	// 自动检测协议：https -> wss, http -> ws
+	if strings.HasPrefix(websocketEndpoint, "https") {
+		websocketEndpoint = "wss" + strings.TrimPrefix(websocketEndpoint, "https")
+	} else {
+		websocketEndpoint = "ws" + strings.TrimPrefix(websocketEndpoint, "http")
+	}
 
 	// 转换中文域名为 ASCII 兼容编码
 	if convertedEndpoint, err := utils.ConvertIDNToASCII(websocketEndpoint); err == nil {
@@ -47,7 +52,8 @@ func EstablishWebSocketConnection() {
 	dataTicker := time.NewTicker(time.Duration(interval * float64(time.Second)))
 	defer dataTicker.Stop()
 
-	heartbeatTicker := time.NewTicker(30 * time.Second)
+	// 心跳间隔改为 10 秒
+	heartbeatTicker := time.NewTicker(10 * time.Second)
 	defer heartbeatTicker.Stop()
 
 	for {
@@ -166,7 +172,12 @@ func handleWebSocketMessages(conn *ws.SafeConn, done chan<- struct{}) {
 // establishTerminalConnection 建立终端连接并使用terminal包处理终端操作
 func establishTerminalConnection(token, id, endpoint string) {
 	endpoint = strings.TrimSuffix(endpoint, "/") + "/api/clients/terminal?token=" + token + "&id=" + id
-	endpoint = "ws" + strings.TrimPrefix(endpoint, "http")
+	// 自动检测协议：https -> wss, http -> ws
+	if strings.HasPrefix(endpoint, "https") {
+		endpoint = "wss" + strings.TrimPrefix(endpoint, "https")
+	} else {
+		endpoint = "ws" + strings.TrimPrefix(endpoint, "http")
+	}
 
 	// 转换中文域名为 ASCII 兼容编码
 	if convertedEndpoint, err := utils.ConvertIDNToASCII(endpoint); err == nil {
@@ -199,7 +210,11 @@ func newWSDialer() *websocket.Dialer {
 		HandshakeTimeout: 15 * time.Second,
 		NetDialContext:   dnsresolver.GetDialContext(15 * time.Second),
 	}
+	// 默认忽略自签名证书错误，支持 HTTPS/WSS 连接
 	if flags.IgnoreUnsafeCert {
+		d.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+	} else {
+		// 即使未设置 IgnoreUnsafeCert，也创建 TLS 配置以支持 wss://
 		d.TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
 	}
 	return d

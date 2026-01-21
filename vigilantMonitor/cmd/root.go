@@ -109,9 +109,14 @@ var RootCmd = &cobra.Command{
 		}
 		log.Println("Monitoring Interfaces:", interfaceList)
 
-		// 忽略不安全的证书
-		if flags.IgnoreUnsafeCert {
-			http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{InsecureSkipVerify: true}
+		// 默认忽略不安全的证书以支持自签名证书（HTTPS）
+		// 这对于使用自签名证书的 HTTPS 服务器是必需的
+		if flags.IgnoreUnsafeCert || strings.HasPrefix(flags.Endpoint, "https") {
+			if http.DefaultTransport.(*http.Transport).TLSClientConfig == nil {
+				http.DefaultTransport.(*http.Transport).TLSClientConfig = &tls.Config{}
+			}
+			http.DefaultTransport.(*http.Transport).TLSClientConfig.InsecureSkipVerify = true
+			log.Println("TLS certificate verification disabled for HTTPS connections")
 		}
 		// 自动更新
 		if !flags.DisableAutoUpdate {
