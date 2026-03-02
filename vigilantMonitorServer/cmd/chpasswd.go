@@ -7,6 +7,7 @@ import (
 	"vigilantMonitorServer/internal/database/accounts"
 	"vigilantMonitorServer/internal/database/models"
 	"vigilantMonitorServer/internal/dbcore"
+
 	"github.com/spf13/cobra"
 )
 
@@ -25,12 +26,18 @@ var ChpasswdCmd = &cobra.Command{
 			cmd.Help()
 			return
 		}
-		if _, err := os.Stat(conf.Conf.Database.DatabaseFile); os.IsNotExist(err) {
-			cmd.Println("Database file does not exist.")
-			return
+		// 只有在使用 SQLite 时才检查数据库文件是否存在
+		if conf.Conf.Database.DatabaseType == "sqlite" {
+			if _, err := os.Stat(conf.Conf.Database.DatabaseFile); os.IsNotExist(err) {
+				cmd.Println("Database file does not exist.")
+				return
+			}
 		}
 		user := &models.User{}
-		dbcore.GetDBInstance().Model(&models.User{}).First(user)
+		if err := dbcore.GetDBInstance().Model(&models.User{}).First(user).Error; err != nil {
+			cmd.Println("Error: Unable to find admin user:", err)
+			return
+		}
 		cmd.Println("Changing password for user:", user.Username)
 		if err := accounts.ForceResetPassword(user.Username, NewPassword); err != nil {
 			cmd.Println("Error:", err)
