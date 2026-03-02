@@ -6,6 +6,11 @@
       "icon": "Server"
     },
     {
+      "labelKey": "network_devices.title",
+      "path": "/admin/network-devices",
+      "icon": "Network"
+    },
+    {
       "labelKey": "settings.title",
       "path": "/admin/settings",
       "icon": "Bolt",

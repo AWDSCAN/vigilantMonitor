@@ -117,6 +117,12 @@ export const routes: RouteObject[] = [
         ),
       },
       {
+        path: "network-devices",
+        element: React.createElement(
+          lazy(() => import("./pages/admin/network-devices"))
+        ),
+      },
+      {
         path: "logs",
         element: React.createElement(lazy(() => import("./pages/admin/log"))),
       },

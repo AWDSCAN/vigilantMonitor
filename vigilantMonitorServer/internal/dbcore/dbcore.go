@@ -6,6 +6,7 @@ import (
 
 	"vigilantMonitorServer/internal/conf"
 	"vigilantMonitorServer/internal/database/models"
+
 	"gorm.io/gorm"
 )
 
@@ -75,6 +76,8 @@ func runMigrations(db *gorm.DB) error {
 		&models.Session{},
 		&models.Task{},
 		&models.TaskResult{},
+		&models.NetworkDevice{},
+		&models.NetworkDeviceMetrics{},
 	}
 
 	// 执行 AutoMigrate
@@ -89,6 +92,7 @@ func runMigrations(db *gorm.DB) error {
 		"load_notifications", "offline_notifications", "ping_records", "ping_tasks",
 		"oidc_providers", "message_sender_providers", "theme_configurations",
 		"sessions", "tasks", "task_results", "schema_versions",
+		"network_devices", "network_device_metrics",
 	}
 	for _, tableName := range tableNames {
 		setMySQLTableCharset(db, tableName)

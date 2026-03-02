@@ -210,5 +210,19 @@ func LoadApiV1Routes(r *gin.Engine, conf conf.V1Struct) {
 			commandGroup.DELETE("/:task_id", admin.DeleteCommandTask) // 删除任务
 		}
 
+		// network devices (SNMP)
+		networkDeviceGroup := adminAuthrized.Group("/network-device")
+		{
+			networkDeviceGroup.GET("", admin.GetNetworkDevices)                                // 获取设备列表
+			networkDeviceGroup.GET("/:id", admin.GetNetworkDevice)                             // 获取单个设备
+			networkDeviceGroup.POST("", admin.CreateNetworkDevice)                             // 创建设备
+			networkDeviceGroup.PUT("/:id", admin.UpdateNetworkDevice)                          // 更新设备
+			networkDeviceGroup.DELETE("/:id", admin.DeleteNetworkDevice)                       // 删除设备
+			networkDeviceGroup.POST("/test", admin.TestNetworkDeviceConnection)                // 测试连接
+			networkDeviceGroup.POST("/:id/collect", admin.CollectNetworkDeviceMetrics)         // 手动采集
+			networkDeviceGroup.GET("/:id/metrics", admin.GetNetworkDeviceMetrics)              // 获取历史数据
+			networkDeviceGroup.GET("/:id/metrics/latest", admin.GetNetworkDeviceLatestMetrics) // 获取最新数据
+		}
+
 	}
 }

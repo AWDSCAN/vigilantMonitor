@@ -12,12 +12,13 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gookit/event v1.2.0
 	github.com/gorilla/websocket v1.5.3
+	github.com/gosnmp/gosnmp v1.43.2
 	github.com/mattn/go-sqlite3 v1.14.27
 	github.com/oschwald/maxminddb-golang v1.13.1
 	github.com/patrickmn/go-cache v2.1.0+incompatible
 	github.com/pquerna/otp v1.5.0
 	github.com/spf13/cobra v1.9.1
-	github.com/stretchr/testify v1.10.0
+	github.com/stretchr/testify v1.11.1
 	golang.org/x/image v0.33.0
 	google.golang.org/grpc v1.75.0
 	google.golang.org/protobuf v1.36.6
@@ -28,11 +29,11 @@ require (
 
 // Misuse of ServerConfig.PublicKeyCallback may cause authorization bypass in golang.org/x/crypto #1
 // golang.org/x/crypto Vulnerable to Denial of Service (DoS) via Slow or Incomplete Key Exchange #3
-require golang.org/x/crypto v0.39.0 // indirect
+require golang.org/x/crypto v0.46.0 // indirect
 
 // HTTP Proxy bypass using IPv6 Zone IDs in golang.org/x/net #2
 // golang.org/x/net vulnerable to Cross-site Scripting #4
-require golang.org/x/net v0.41.0 // indirect
+require golang.org/x/net v0.48.0 // indirect
 
 require (
 	filippo.io/edwards25519 v1.1.0 // indirect
@@ -71,8 +72,8 @@ require (
 	github.com/ugorji/go/codec v1.2.12 // indirect
 	golang.org/x/arch v0.15.0 // indirect
 	golang.org/x/oauth2 v0.30.0 // indirect
-	golang.org/x/sys v0.33.0 // indirect
-	golang.org/x/text v0.31.0 // indirect
+	golang.org/x/sys v0.40.0 // indirect
+	golang.org/x/text v0.32.0 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20250707201910-8d1bb00bc6a7 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
